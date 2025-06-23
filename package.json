@@ -1,8 +1,11 @@
 {
   "name": "commands-emulator",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Emulate Unix commands for scripting, automation, and fun.",
   "main": "./dist/cjs/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "cmplr --type-check",
     "test": "node --test 'dist/cjs/**/*.test.js'"
