@@ -14,8 +14,10 @@ test("ls command functionality", async (t) => {
   writeFileSync(join(testDir, ".hidden"), "hidden content");
 
   try {
+    const commands = emulator(testDir);
+
     await t.test("ls should return array of FileEntry objects", async () => {
-      const result = await emulator(testDir, `ls ${testDir}`) as FileEntry[];
+      const result = await commands(`ls ${testDir}`) as FileEntry[];
       assert(Array.isArray(result), "ls should return an array");
       assert.strictEqual(result.length, 3);
       
@@ -31,20 +33,20 @@ test("ls command functionality", async (t) => {
 
     await t.test("ls should fail with relative path", async () => {
       await assert.rejects(
-        () => emulator(testDir, "ls subdir"),
+        () => commands("ls subdir"),
         /only absolute paths are supported/
       );
     });
 
     await t.test("ls should fail without path", async () => {
       await assert.rejects(
-        () => emulator(testDir, "ls"),
+        () => commands("ls"),
         /missing operand.*path required/
       );
     });
 
     await t.test("ls -a should include hidden files", async () => {
-      const result = await emulator(testDir, `ls -a ${testDir}`) as FileEntry[];
+      const result = await commands(`ls -a ${testDir}`) as FileEntry[];
       assert(Array.isArray(result));
       assert.strictEqual(result.length, 4); // includes .hidden
       
@@ -55,7 +57,7 @@ test("ls command functionality", async (t) => {
     });
 
     await t.test("ls -l should include detailed information", async () => {
-      const result = await emulator(testDir, `ls -l ${testDir}`) as FileEntry[];
+      const result = await commands(`ls -l ${testDir}`) as FileEntry[];
       assert(Array.isArray(result));
       
       const file1 = result.find(entry => entry.name === "file1.txt");
@@ -72,7 +74,7 @@ test("ls command functionality", async (t) => {
     });
 
     await t.test("ls with mixed flags should work", async () => {
-      const result = await emulator(testDir, `ls -l -a ${testDir}`) as FileEntry[];
+      const result = await commands(`ls -l -a ${testDir}`) as FileEntry[];
       assert(Array.isArray(result));
       assert.strictEqual(result.length, 4); // includes .hidden
       
@@ -84,7 +86,7 @@ test("ls command functionality", async (t) => {
 
     await t.test("ls outside root should be prevented", async () => {
       await assert.rejects(
-        () => emulator(testDir, "ls /"),
+        () => commands("ls /"),
         /Permission denied.*outside root directory/
       );
     });
@@ -94,7 +96,7 @@ test("ls command functionality", async (t) => {
       async () => {
         const nonExistentPath = join(testDir, "nonexistent");
         await assert.rejects(
-          () => emulator(testDir, `ls ${nonExistentPath}`),
+          () => commands(`ls ${nonExistentPath}`),
           /cannot access/
         );
       }

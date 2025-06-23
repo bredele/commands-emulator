@@ -11,21 +11,23 @@ test("cd command functionality", async (t) => {
   mkdirSync(join(testDir, "subdir"));
 
   try {
+    const commands = emulator(testDir);
+
     await t.test("cd should validate and return absolute path", async () => {
       const subdirPath = join(testDir, "subdir");
-      const result = await emulator(testDir, `cd ${subdirPath}`);
+      const result = await commands(`cd ${subdirPath}`);
       assert.strictEqual(result, subdirPath);
     });
 
     await t.test("cd should fail with relative path", async () => {
       await assert.rejects(
-        () => emulator(testDir, "cd subdir"),
+        () => commands("cd subdir"),
         /only absolute paths are supported/
       );
     });
 
     await t.test("cd without path should return root directory", async () => {
-      const result = await emulator(testDir, "cd");
+      const result = await commands("cd");
       assert.strictEqual(result, testDir);
     });
 
@@ -34,7 +36,7 @@ test("cd command functionality", async (t) => {
       async () => {
         const nonExistentPath = join(testDir, "nonexistent");
         await assert.rejects(
-          () => emulator(testDir, `cd ${nonExistentPath}`),
+          () => commands(`cd ${nonExistentPath}`),
           /No such file or directory/
         );
       }
@@ -42,7 +44,7 @@ test("cd command functionality", async (t) => {
 
     await t.test("cd outside root should be prevented", async () => {
       await assert.rejects(
-        () => emulator(testDir, "cd /"),
+        () => commands("cd /"),
         /Permission denied.*outside root directory/
       );
     });
@@ -51,7 +53,7 @@ test("cd command functionality", async (t) => {
       const filePath = join(testDir, "testfile.txt");
       writeFileSync(filePath, "content");
       await assert.rejects(
-        () => emulator(testDir, `cd ${filePath}`),
+        () => commands(`cd ${filePath}`),
         /Not a directory/
       );
     });

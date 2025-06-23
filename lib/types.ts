@@ -5,3 +5,7 @@ export interface FileEntry {
   size?: number;
   date?: string;
 }
+
+export type CommandExecutor = (
+  commandString: string
+) => Promise<string | ReadableStream | FileEntry[] | void>;

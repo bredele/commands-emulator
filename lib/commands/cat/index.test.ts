@@ -38,33 +38,35 @@ test("cat command functionality", async (t) => {
   writeFileSync(subFile, subContent);
 
   try {
+    const commands = emulator(testDir);
+
     await t.test("cat should return ReadableStream", async () => {
-      const result = await emulator(testDir, `cat ${testFile}`);
+      const result = await commands(`cat ${testFile}`);
       assert(result instanceof ReadableStream, "cat should return ReadableStream");
     });
 
     await t.test("cat should stream file contents", async () => {
-      const result = await emulator(testDir, `cat ${testFile}`) as ReadableStream;
+      const result = await commands(`cat ${testFile}`) as ReadableStream;
       const content = await streamToString(result);
       assert.strictEqual(content, testContent);
     });
 
     await t.test("cat should stream nested file contents", async () => {
-      const result = await emulator(testDir, `cat ${subFile}`) as ReadableStream;
+      const result = await commands(`cat ${subFile}`) as ReadableStream;
       const content = await streamToString(result);
       assert.strictEqual(content, subContent);
     });
 
     await t.test("cat should fail with relative path", async () => {
       await assert.rejects(
-        () => emulator(testDir, "cat test.txt"),
+        () => commands("cat test.txt"),
         /only absolute paths are supported/
       );
     });
 
     await t.test("cat should fail without file path", async () => {
       await assert.rejects(
-        () => emulator(testDir, "cat"),
+        () => commands("cat"),
         /missing operand.*file path required/
       );
     });
@@ -72,7 +74,7 @@ test("cat command functionality", async (t) => {
     await t.test("cat with non-existent file should throw error", async () => {
       const nonExistentFile = join(testDir, "nonexistent.txt");
       await assert.rejects(
-        () => emulator(testDir, `cat ${nonExistentFile}`),
+        () => commands(`cat ${nonExistentFile}`),
         /No such file or directory/
       );
     });
@@ -80,14 +82,14 @@ test("cat command functionality", async (t) => {
     await t.test("cat with directory should throw error", async () => {
       const dirPath = join(testDir, "subdir");
       await assert.rejects(
-        () => emulator(testDir, `cat ${dirPath}`),
+        () => commands(`cat ${dirPath}`),
         /Is a directory/
       );
     });
 
     await t.test("cat outside root should be prevented", async () => {
       await assert.rejects(
-        () => emulator(testDir, "cat /etc/passwd"),
+        () => commands("cat /etc/passwd"),
         /Permission denied.*outside root directory/
       );
     });
@@ -95,7 +97,7 @@ test("cat command functionality", async (t) => {
     await t.test("cat should stream empty file", async () => {
       const emptyFile = join(testDir, "empty.txt");
       writeFileSync(emptyFile, "");
-      const result = await emulator(testDir, `cat ${emptyFile}`) as ReadableStream;
+      const result = await commands(`cat ${emptyFile}`) as ReadableStream;
       const content = await streamToString(result);
       assert.strictEqual(content, "");
     });
@@ -105,7 +107,7 @@ test("cat command functionality", async (t) => {
       const specialContent =
         "Content with\ttabs\nand\nnewlines\r\nand unicode: 🚀";
       writeFileSync(specialFile, specialContent);
-      const result = await emulator(testDir, `cat ${specialFile}`) as ReadableStream;
+      const result = await commands(`cat ${specialFile}`) as ReadableStream;
       const content = await streamToString(result);
       assert.strictEqual(content, specialContent);
     });
@@ -114,7 +116,7 @@ test("cat command functionality", async (t) => {
       const largeFile = join(testDir, "large.txt");
       const largeContent = "A".repeat(100000); // 100KB file
       writeFileSync(largeFile, largeContent);
-      const result = await emulator(testDir, `cat ${largeFile}`) as ReadableStream;
+      const result = await commands(`cat ${largeFile}`) as ReadableStream;
       const content = await streamToString(result);
       assert.strictEqual(content, largeContent);
       assert.strictEqual(content.length, 100000);
