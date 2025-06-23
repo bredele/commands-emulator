@@ -1,0 +1,43 @@
+{
+  "name": "commands-emulator",
+  "version": "1.0.0",
+  "description": "Emulate Unix commands for scripting, automation, and fun.",
+  "main": "./dist/cjs/index.js",
+  "scripts": {
+    "build": "cmplr --type-check",
+    "test": "node --test 'dist/cjs/**/*.test.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bredele/commands-emulator.git"
+  },
+  "keywords": [
+    "emulator",
+    "unix",
+    "commands"
+  ],
+  "author": "Olivier Wietrich",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bredele/commands-emulator/issues"
+  },
+  "homepage": "https://github.com/bredele/commands-emulator#readme",
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "cmplr": "^1.1.0"
+  },
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/esm/types.js",
+      "require": "./dist/cjs/types.js",
+      "types": "./dist/types/types.d.ts"
+    }
+  }
+}
