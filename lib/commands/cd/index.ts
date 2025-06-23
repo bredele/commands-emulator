@@ -1,6 +1,8 @@
 import { resolve, isAbsolute } from "node:path";
 import { existsSync, statSync } from "node:fs";
 
+export const description = "Change directory";
+
 export default async (
   rootDirectory: string,
   args: string[]

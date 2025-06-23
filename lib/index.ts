@@ -52,6 +52,18 @@ export default function emulator(
     }
 
     try {
+      // Special handling for help command - pass custom command paths
+      if (commandName === "help") {
+        // Set custom command paths in global scope for help command to access
+        (globalThis as any).__customCommandsPaths = customCommandsPaths || [];
+        try {
+          return await commandFunction(rootDirectory, args);
+        } finally {
+          // Clean up global scope
+          delete (globalThis as any).__customCommandsPaths;
+        }
+      }
+      
       return await commandFunction(rootDirectory, args);
     } catch (error) {
       if (error instanceof Error) {

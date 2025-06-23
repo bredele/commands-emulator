@@ -2,6 +2,8 @@ import { readdir, stat } from "node:fs/promises";
 import { join, resolve, isAbsolute } from "node:path";
 import { FileEntry } from "../../types";
 
+export const description = "List directory contents";
+
 export default async (
   rootDirectory: string,
   args: string[]

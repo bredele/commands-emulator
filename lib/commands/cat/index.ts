@@ -2,6 +2,8 @@ import { createReadStream } from "node:fs";
 import { resolve, isAbsolute } from "node:path";
 import { existsSync, statSync } from "node:fs";
 
+export const description = "Display file contents";
+
 export default async (
   rootDirectory: string,
   args: string[]
