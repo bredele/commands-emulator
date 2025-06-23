@@ -10,11 +10,11 @@ npm install commands-emulator
 
 ## Usage
 
-```ts 
-import emulator from 'commands-emulator'
+```ts
+import commands from "commands-emulator";
 
 // Execute commands with explicit paths (stateless)
-await emulator(process.cwd(), 'ls /path/to/directory')
-await emulator(process.cwd(), 'ls -la /path/to/directory')  
-await emulator(process.cwd(), 'cd /absolute/path')
+await commands(process.cwd(), "ls /path/to/directory");
+await commands(process.cwd(), "ls -la /path/to/directory");
+await commands(process.cwd(), "cd /absolute/path");
 ```
